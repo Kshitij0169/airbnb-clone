@@ -7,17 +7,24 @@ import { DateRangePicker } from "react-date-range";
 import { MagnifyingGlassIcon } from "@heroicons/react/24/solid";
 import Link from "next/link";
 import { useSearchStore } from "@/store";
+import { useRouter } from "next/navigation";
 
-const SearchBar = () => {
+const SearchBar = ({ toggleExpanded }) => {
   const [isSearchFocused, setIsSearchFocused] = useState(false);
   const locationInput = useSearchStore((state) => state.location);
   const startDate = useSearchStore((state) => state.dates[0]);
   const endDate = useSearchStore((state) => state.dates[1]);
+  const router = useRouter();
+  const [dateRangeLabel, setDateRangeLabel] = useState("Select Ranges");
+  const count = useSearchStore((state) => state.guests);
 
   const handleSelect = (ranges) => {
     useSearchStore.setState({
       dates: [ranges.selection.startDate, ranges.selection.endDate],
     });
+    setDateRangeLabel(
+      `${ranges.selection.startDate.toDateString()} - ${ranges.selection.endDate.toDateString()}`
+    );
   };
 
   const selectionRange = {
@@ -30,10 +37,15 @@ const SearchBar = () => {
     useSearchStore.setState({ location: e.target.value });
   };
 
+  const handleSearchClick = () => {
+    router.push("/search/results");
+    toggleExpanded();
+  };
+
   return (
-    <div className="flex flex-row self-center rounded-full border p-2 mt-8 w-3/4 mx-[500px]">
+    <div className="flex flex-row self-center rounded-full border p-2 mt-8 w-1/2 mx-[500px]">
       <button
-        className="border-r px-4 text-left"
+        className="border-r px-4 text-left grow"
         onClick={() => setIsSearchFocused(true)}
       >
         <p className="font-bold">Where</p>
@@ -46,13 +58,17 @@ const SearchBar = () => {
             className="text-slate-800 bg-transparent border-none outline-none"
           />
         ) : (
-          <p className="text-slate-600 ">Search Destinations</p>
+          <p className="text-slate-600 ">
+            {locationInput && locationInput !== ""
+              ? locationInput
+              : "Search Destinations"}
+          </p>
         )}
       </button>
-      <div className="dropdown dropdown-end px-4 border-r">
+      <div className="dropdown dropdown-end px-4 border-r grow">
         <label tabIndex={1}>
           <p className="font-bold">Dates</p>
-          <p className="text-slate-600">Select Ranges</p>
+          <p className="text-slate-600">{dateRangeLabel}</p>
         </label>
         <div
           tabIndex={1}
@@ -66,10 +82,12 @@ const SearchBar = () => {
           />
         </div>
       </div>
-      <div className="dropdown dropdown-end px-4">
+      <div className="dropdown dropdown-end px-4 grow">
         <label tabIndex={2}>
           <p className="font-bold">Who</p>
-          <p className="text-slate-600">Add Guests</p>
+          <p className="text-slate-600">
+            {count > 0 ? `${count} Guests` : "Add Guests"}
+          </p>
         </label>
         <div
           tabIndex={2}
@@ -78,13 +96,14 @@ const SearchBar = () => {
           <Counter label="Adults" />
         </div>
       </div>
-      <Link
+      <button
         href="/search/results"
-        className="px-4 text-white rounded-full bg-primary p-4 flex justify-center gap-3 flex-row"
+        onClick={handleSearchClick}
+        className="px-4 text-white rounded-full bg-primary p-4 flex justify-center gap-3 flex-row grow"
       >
         <MagnifyingGlassIcon className="w-5 h-5" />
         <span>Search</span>
-      </Link>
+      </button>
     </div>
   );
 };
