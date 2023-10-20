@@ -58,7 +58,7 @@ export default function Header() {
     }
   );
 
-  const userIconClasses = clsx("text-slate-600 flex", "", {
+  const userIconClasses = clsx("text-slate-600 hidden md:flex", "", {
     "items-center": !isExpanded,
     "items-start": isExpanded,
   });
@@ -168,7 +168,7 @@ export default function Header() {
             </motion.button>
           </div>
           {/* Mobile Navigation */}
-          <div className="md:hidden flex grow">
+          <div className="md:hidden flex-grow">
             <MobileNav />
           </div>
           <div className={userIconClasses}>
