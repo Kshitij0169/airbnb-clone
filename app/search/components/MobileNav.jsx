@@ -36,7 +36,7 @@ const MobileNav = () => {
         </div>
       </label>
       {/* MODAL */}
-      <input type="checkbox" id="my_modal_7" class="modal-toggle" />
+      <input type="checkbox" id="my_modal_7" className="modal-toggle" />
       <div className="modal">
         <div className="modal-box">
           <label
